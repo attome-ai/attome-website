@@ -1,3 +1,5 @@
+mod auth;
+
 use base_config::AppConfig;
 use base_server::AppState;
 
@@ -17,14 +19,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let db = base_db::create_pool(&config).await?;
     tracing::info!("postgres pool connected");
 
-    // Run migrations from this crate's migrations/ folder
-    sqlx::migrate!("migrations").run(&db).await?;
+    sqlx::migrate!().run(&db).await?;
     tracing::info!("migrations applied");
 
     let redis = base_cache::create_redis_pool(&config).await?;
 
     let state = AppState::new(config.clone(), db, redis);
-    let app   = xrm_server::build_app(state);
+
+    // build_app returns Router<()> (state already set); auth routes need .with_state() first.
+    let app = xrm_server::build_app(state.clone())
+        .merge(auth::routes().with_state(state.clone()));
 
     let addr     = config.bind_addr();
     let listener = tokio::net::TcpListener::bind(&addr).await?;
