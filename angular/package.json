@@ -1,0 +1,31 @@
+{
+  "name": "attome-website",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "ng serve --port 4200",
+    "start:prod": "ng serve --configuration production --port 4200",
+    "build": "ng build",
+    "build:prod": "ng build --configuration production"
+  },
+  "dependencies": {
+    "@angular/animations": "^22.0.4",
+    "@angular/common": "^22.0.4",
+    "@angular/compiler": "^22.0.4",
+    "@angular/core": "^22.0.4",
+    "@angular/forms": "^22.0.4",
+    "@angular/platform-browser": "^22.0.4",
+    "@angular/router": "^22.0.4",
+    "@attome/base": "file:../../attome-base/angular/dist/base",
+    "@attome/xrm": "file:../../attome-xrm/angular/dist/xrm",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.8.0",
+    "zone.js": "~0.15.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^22.0.4",
+    "@angular/cli": "^22.0.4",
+    "@angular/compiler-cli": "^22.0.4",
+    "typescript": "~6.0.0"
+  }
+}

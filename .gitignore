@@ -1,2 +1,14 @@
+# Rust
 /target
+
+# Secrets / local config
 .env
+config.json
+config.debug.json
+
+# Angular
+angular/node_modules/
+angular/dist/
+angular/.angular/
+angular/dev-server.log
+angular/dev-server.err.log

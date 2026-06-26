@@ -1,0 +1,60 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "attome-website": {
+      "projectType": "application",
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "outputPath":    "dist/attome-website",
+            "index":         "src/index.html",
+            "browser":       "src/main.ts",
+            "polyfills":     ["zone.js"],
+            "tsConfig":      "tsconfig.app.json",
+            "assets":        [{ "glob": "**/*", "input": "public" }],
+            "styles":        ["src/styles.css"],
+            "scripts":       []
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                { "type": "initial",      "maximumWarning": "500kB", "maximumError": "1MB" },
+                { "type": "anyComponentStyle", "maximumWarning": "4kB" }
+              ],
+              "outputHashing": "all",
+              "fileReplacements": [
+                { "replace": "src/environments/environment.ts",
+                  "with":    "src/environments/environment.prod.ts" }
+              ]
+            },
+            "development": {
+              "optimization":  false,
+              "sourceMap":     true,
+              "extractLicenses": false
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "options": {
+            "prebundle": {
+              "exclude": ["@attome/base", "@attome/xrm"]
+            }
+          },
+          "configurations": {
+            "production":  { "buildTarget": "attome-website:build:production" },
+            "development": { "buildTarget": "attome-website:build:development" }
+          },
+          "defaultConfiguration": "development"
+        }
+      }
+    }
+  }
+}
