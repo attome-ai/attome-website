@@ -1,7 +1,30 @@
-import { Routes } from '@angular/router';
-import { authGuard } from '@attome/base';
+import { inject } from '@angular/core';
+import { CanActivateFn, Router, Routes } from '@angular/router';
+import { AuthService, authGuard, LoginPageComponent } from '@attome/base';
+
+const xrmEntryGuard: CanActivateFn = () => {
+  const auth   = inject(AuthService);
+  const router = inject(Router);
+  return router.createUrlTree(auth.isLoggedIn() ? ['/dashboard'] : ['/xrm/login']);
+};
 
 export const routes: Routes = [
+  {
+    path: '',
+    pathMatch: 'full',
+    loadComponent: () => import('./pages/landing/landing.component').then(m => m.LandingComponent),
+  },
+  {
+    path: 'xrm',
+    pathMatch: 'full',
+    canActivate: [xrmEntryGuard],
+    loadComponent: () => import('./pages/landing/landing.component').then(m => m.LandingComponent),
+  },
+  {
+    path: 'xrm/login',
+    component: LoginPageComponent,
+    data: { successRoute: '/dashboard', backRoute: '/', pageTitle: 'XRM Access', pageSubtitle: 'Sign in to the Attome Enterprise Platform' },
+  },
   {
     path: 'login',
     loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent),
@@ -15,11 +38,6 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./layout/shell.component').then(m => m.ShellComponent),
     children: [
-      {
-        path: '',
-        redirectTo: 'dashboard',
-        pathMatch: 'full',
-      },
       {
         path: 'dashboard',
         loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent),

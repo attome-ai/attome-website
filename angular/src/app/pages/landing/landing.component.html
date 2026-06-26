@@ -1,0 +1,334 @@
+<div class="page dark-theme">
+  <div class="noise-overlay"></div>
+
+  <!-- Fixed Video Background -->
+  <div class="bg-layer">
+    <video src="tmp.mp4" autoplay loop muted playsinline class="bg-video"></video>
+    <div class="video-overlay"></div>
+  </div>
+
+  <!-- Scrollable Content -->
+  <div class="scroll-container">
+
+    <!-- Header -->
+    <header class="header-wrapper">
+      <a routerLink="/" class="brand">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <rect width="28" height="28" rx="7" fill="rgba(255,255,255,0.1)"/>
+          <path d="M7 20L14 8L21 20" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M9.5 16H18.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <span class="brand-name">Attome</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="#platform">Platform</a>
+        <a href="#ai">Sovereign AI</a>
+        <a href="#solutions">Solutions</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <button class="btn-outline" (click)="openSignIn()">Sign In</button>
+    </header>
+
+    <!-- ── Hero ── -->
+    <section class="section-hero" id="hero">
+      <div class="glow-orb orb-1"></div>
+      <div class="glow-orb orb-2"></div>
+
+      <div class="container text-center relative z-10">
+        <span class="eyebrow fade-in-up">GCC ENTERPRISE PLATFORM</span>
+
+        <h1 class="hero-headline fade-in-up delay-1">
+          Build enterprise systems,<br />
+          <span class="text-gradient">without the enterprise cost.</span>
+        </h1>
+
+        <p class="hero-sub fade-in-up delay-2">
+          Attome's metadata-driven XRM lets government and enterprise teams deploy
+          fully customised applications — CRM, case management, workflow automation,
+          sovereign AI — in weeks, not years.
+        </p>
+
+        <div class="hero-actions fade-in-up delay-3">
+          <button class="btn-primary" (click)="openSignIn()">Request a Demo</button>
+          <a href="#platform" class="btn-outline">Explore the Platform</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Stats Bar ── -->
+    <section class="stats-bar">
+      <div class="container stats-grid">
+        <div class="stat-item">
+          <span class="stat-num">20<span class="stat-plus">+</span></span>
+          <span class="stat-label">Platform Engines</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-num">5</span>
+          <span class="stat-label">LLM Providers</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-num">100<span class="stat-plus">%</span></span>
+          <span class="stat-label">RTL Arabic Native</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-num">0</span>
+          <span class="stat-label">Lines of Code to Start</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Showcase Cards ── -->
+    <section class="section-padding" id="platform">
+      <div class="container">
+
+        <!-- Card 1: Metadata-driven XRM -->
+        <div class="showcase-row">
+          <div class="showcase-text fade-in-up">
+            <span class="badge">Core Platform</span>
+            <h2 class="section-headline">Build any enterprise app,<br /><span class="text-gradient">visually.</span></h2>
+            <p class="section-body">
+              Twenty platform engines — entities, forms, workflows, rules, permissions,
+              search, audit, localisation — all driven by metadata. Define your data model
+              and your application is live. No backend code, no frontend boilerplate.
+            </p>
+            <ul class="feature-list">
+              <li>Visual entity and relationship builder</li>
+              <li>Drag-and-drop form designer with validation rules</li>
+              <li>Multi-step workflow and approval automation</li>
+              <li>Role-based access at field granularity</li>
+            </ul>
+          </div>
+          <div class="showcase-visual glass-panel fade-in-up delay-1">
+            <div class="mock-entities">
+              <div class="mock-entity-row header">
+                <span>Entity</span><span>Fields</span><span>Records</span>
+              </div>
+              <div class="mock-entity-row">
+                <span class="entity-dot blue"></span><span>Citizens</span><span>24</span><span>148,320</span>
+              </div>
+              <div class="mock-entity-row active">
+                <span class="entity-dot green"></span><span>Licenses</span><span>18</span><span>37,482</span>
+              </div>
+              <div class="mock-entity-row">
+                <span class="entity-dot amber"></span><span>Cases</span><span>31</span><span>9,841</span>
+              </div>
+              <div class="mock-entity-row">
+                <span class="entity-dot purple"></span><span>Assets</span><span>12</span><span>4,200</span>
+              </div>
+              <div class="mock-toolbar">
+                <span class="mock-btn">+ New Entity</span>
+                <span class="mock-btn secondary">Import Schema</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Sovereign AI -->
+        <div class="showcase-row reverse" id="ai">
+          <div class="showcase-text fade-in-up">
+            <span class="badge">Sovereign AI</span>
+            <h2 class="section-headline">AI that stays<br /><span class="text-gradient">inside your walls.</span></h2>
+            <p class="section-body">
+              A built-in multi-LLM gateway connects to OpenAI, Anthropic, Google AI,
+              DeepSeek, or locally-hosted models. Embeddings and RAG run in-process —
+              no data leaves your perimeter, even in a fully air-gapped ministry.
+            </p>
+            <ul class="feature-list">
+              <li>In-process vector embeddings (no third-party API)</li>
+              <li>Air-gapped retrieval-augmented generation</li>
+              <li>Multi-LLM gateway — switch providers without code changes</li>
+              <li>Semantic search across all platform entities</li>
+            </ul>
+          </div>
+          <div class="showcase-visual glass-panel fade-in-up delay-1">
+            <div class="mock-ai">
+              <div class="ai-header">
+                <span class="ai-dot pulse"></span>
+                <span class="ai-label">Sovereign AI Gateway</span>
+              </div>
+              <div class="ai-models">
+                <div class="ai-model-chip active">GPT-4o</div>
+                <div class="ai-model-chip">Claude 4</div>
+                <div class="ai-model-chip">Gemini Pro</div>
+                <div class="ai-model-chip">DeepSeek</div>
+                <div class="ai-model-chip local">Local LLM</div>
+              </div>
+              <div class="ai-query">
+                <div class="ai-prompt">Search: "pending license renewals in Manama"</div>
+                <div class="ai-result">
+                  <span class="ai-result-num">42</span> records found via semantic RAG
+                </div>
+              </div>
+              <div class="ai-badge">
+                <span class="lock-icon">&#x1F512;</span> Data never leaves your servers
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: Arabic-first -->
+        <div class="showcase-row" id="solutions">
+          <div class="showcase-text fade-in-up">
+            <span class="badge">GCC Ready</span>
+            <h2 class="section-headline">Arabic-first.<br /><span class="text-gradient">Not Arabic-patched.</span></h2>
+            <p class="section-body">
+              RTL layout, Hijri calendar, Arabic numerals, and GCC date conventions are
+              built into the framework core — not layered on top. Every component, every
+              form, every report renders correctly in Arabic without workarounds.
+            </p>
+            <ul class="feature-list">
+              <li>Bidirectional RTL layout at the framework level</li>
+              <li>Full Hijri / Gregorian calendar switching</li>
+              <li>GCC government document formatting standards</li>
+              <li>Trusted by organisations in Bahrain, Saudi Arabia, UAE</li>
+            </ul>
+          </div>
+          <div class="showcase-visual glass-panel fade-in-up delay-1">
+            <div class="mock-arabic">
+              <div class="arabic-header">معاينة النظام</div>
+              <div class="arabic-form">
+                <div class="arabic-field">
+                  <span class="ar-label">الاسم الكامل</span>
+                  <span class="ar-value">محمد عبدالله الحربي</span>
+                </div>
+                <div class="arabic-field">
+                  <span class="ar-label">تاريخ الميلاد (هجري)</span>
+                  <span class="ar-value">١٤ ربيع الأول ١٤٠٠</span>
+                </div>
+                <div class="arabic-field">
+                  <span class="ar-label">رقم الترخيص</span>
+                  <span class="ar-value">BH-٢٠٢٦-٠٠٤٧١</span>
+                </div>
+                <div class="arabic-status">
+                  <span class="status-dot green"></span>
+                  <span>نشط · Active</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4: Air-gap -->
+        <div class="showcase-row reverse">
+          <div class="showcase-text fade-in-up">
+            <span class="badge">Deployment</span>
+            <h2 class="section-headline">SaaS or air-gapped.<br /><span class="text-gradient">Same binary.</span></h2>
+            <p class="section-body">
+              The Rust backend compiles to a single static binary with no runtime
+              dependencies. Deploy to Kubernetes for cloud, or copy it onto a ministry
+              server with no internet access — the feature set is identical. Ship in minutes.
+            </p>
+            <ul class="feature-list">
+              <li>Single Rust binary — no Node, Java, or .NET runtime</li>
+              <li>K8s Helm chart for cloud deployments</li>
+              <li>Air-gap install: copy binary + config, run</li>
+              <li>Tamper-evident hash-chained audit trail</li>
+            </ul>
+          </div>
+          <div class="showcase-visual glass-panel fade-in-up delay-1">
+            <div class="mock-deploy">
+              <div class="deploy-env">
+                <div class="deploy-card cloud">
+                  <div class="deploy-icon">☁</div>
+                  <div class="deploy-name">Cloud / K8s</div>
+                  <div class="deploy-tag">SaaS</div>
+                </div>
+                <div class="deploy-arrow">
+                  <span class="binary-badge">attome v2.1<br/>8.4 MB</span>
+                  <span class="arrow-line">→</span>
+                </div>
+                <div class="deploy-card ministry">
+                  <div class="deploy-icon">🏛</div>
+                  <div class="deploy-name">Ministry Server</div>
+                  <div class="deploy-tag">Air-gap</div>
+                </div>
+              </div>
+              <div class="deploy-note">
+                <span class="check">✓</span> Same binary. Same features. Zero delta.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── FAQ ── -->
+    <section class="section-padding" id="faq">
+      <div class="container faq-container">
+        <div class="text-center mb-section">
+          <span class="eyebrow">COMMON QUESTIONS</span>
+          <h2 class="section-headline mt-3">Everything you need<br /><span class="text-gradient">to know.</span></h2>
+        </div>
+
+        <div class="faq-list">
+          @for (faq of faqs; track faq.q) {
+            <div class="faq-item glass-panel" [class.open]="faq.open" (click)="toggle(faq)">
+              <div class="faq-header">
+                <span class="faq-q">{{ faq.q }}</span>
+                <span class="faq-chevron">{{ faq.open ? '−' : '+' }}</span>
+              </div>
+              @if (faq.open) {
+                <p class="faq-a">{{ faq.a }}</p>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Final CTA ── -->
+    <section class="section-cta">
+      <div class="glow-orb orb-cta"></div>
+      <div class="container text-center relative z-10">
+        <h2 class="cta-headline fade-in-up">
+          Ready to modernise<br /><span class="text-gradient">your organisation?</span>
+        </h2>
+        <p class="cta-sub fade-in-up delay-1">
+          From a single government ministry to an enterprise-wide deployment —
+          Attome scales with your ambition.
+        </p>
+        <div class="hero-actions fade-in-up delay-2">
+          <button class="btn-primary" (click)="openSignIn()">Get Started</button>
+          <a href="mailto:hello@attome.com" class="btn-outline">Contact Sales</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Footer ── -->
+    <footer class="footer">
+      <div class="glow-orb orb-footer"></div>
+      <div class="container footer-inner relative z-10">
+        <div class="footer-brand">
+          <div class="brand mb-4">
+            <svg width="32" height="32" viewBox="0 0 28 28" fill="none">
+              <rect width="28" height="28" rx="7" fill="rgba(255,255,255,0.08)"/>
+              <path d="M7 20L14 8L21 20" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M9.5 16H18.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span class="brand-name" style="font-size: 1.75rem;">Attome</span>
+          </div>
+          <p class="footer-tagline">
+            Metadata-driven enterprise XRM &amp; Sovereign AI<br />
+            for GCC government and enterprise.
+          </p>
+          <a href="mailto:hello@attome.com" class="footer-email">hello&#64;attome.com</a>
+        </div>
+
+        <div class="footer-links">
+          <a routerLink="/login">Platform</a>
+          <a routerLink="/login">Solutions</a>
+          <a routerLink="/login">Documentation</a>
+          <button class="footer-link-btn" (click)="openSignIn()">Sign In</button>
+          <div class="footer-copy">&copy; 2026 Attome. All rights reserved.</div>
+        </div>
+      </div>
+    </footer>
+
+  </div><!-- /scroll-container -->
+</div>

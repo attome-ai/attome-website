@@ -1,10 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=DM+Sans:wght@400;500;600;700&display=swap');
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* ── XRM design-system tokens (light theme default) ── */
+:root {
+  --color-bg:           #f9fafb;
+  --color-bg-alt:       #ffffff;
+  --color-text-primary: #111827;
+  --color-text-secondary: #6b7280;
+  --color-primary:      #374151;
+  --color-border:       #d1d5db;
+  --color-accent:       #5D5CDE;
+  --color-accent-hover: #4c4bc9;
+  --color-card-shadow:  rgba(0, 0, 0, 0.1);
+  --header-height:      64px;
+}
+
 body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'DM Sans', 'Inter', system-ui, -apple-system, sans-serif;
   font-size: 14px;
-  color: #111827;
-  background: #f9fafb;
+  color: var(--color-text-primary);
+  background: var(--color-bg);
   line-height: 1.5;
 }
 
