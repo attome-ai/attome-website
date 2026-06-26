@@ -20,6 +20,7 @@ base-db.workspace            = true
 base-cache.workspace         = true
 base-auth.workspace          = true
 base-server.workspace        = true
+base-storage.workspace       = true
 tokio.workspace              = true
 tracing.workspace            = true
 tracing-subscriber.workspace = true

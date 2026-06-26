@@ -20,6 +20,7 @@ base-db        = { git = "https://github.com/attome-ai/attome-base", tag = "v1.1
 base-cache     = { git = "https://github.com/attome-ai/attome-base", tag = "v1.1.0" }
 base-auth      = { git = "https://github.com/attome-ai/attome-base", tag = "v1.1.0" }
 base-server    = { git = "https://github.com/attome-ai/attome-base", tag = "v1.1.0" }
+base-storage   = { git = "https://github.com/attome-ai/attome-base", tag = "v1.1.0" }
 
 serde      = { version = "1", features = ["derive"] }
 serde_json = "1"
@@ -51,9 +52,10 @@ xrm-generator  = { path = "../attome-xrm/crates/xrm-generator" }
 xrm-ai         = { path = "../attome-xrm/crates/xrm-ai" }
 
 [patch."https://github.com/attome-ai/attome-base"]
-base-types  = { path = "../attome-base/crates/base-types" }
-base-config = { path = "../attome-base/crates/base-config" }
-base-db     = { path = "../attome-base/crates/base-db" }
-base-cache  = { path = "../attome-base/crates/base-cache" }
-base-auth   = { path = "../attome-base/crates/base-auth" }
-base-server = { path = "../attome-base/crates/base-server" }
+base-types    = { path = "../attome-base/crates/base-types" }
+base-config   = { path = "../attome-base/crates/base-config" }
+base-db       = { path = "../attome-base/crates/base-db" }
+base-cache    = { path = "../attome-base/crates/base-cache" }
+base-auth     = { path = "../attome-base/crates/base-auth" }
+base-server   = { path = "../attome-base/crates/base-server" }
+base-storage  = { path = "../attome-base/crates/base-storage" }

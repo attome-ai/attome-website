@@ -1,36 +1,9 @@
-# Local development infrastructure only (Postgres + Redis).
-# Run once: docker compose -f docker-compose.dev.yml up -d
-# Then:     cargo run   (from this directory)
-
-services:
-  postgres:
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_USER:     attome
-      POSTGRES_PASSWORD: attome_dev
-      POSTGRES_DB:       attome
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U attome"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
-volumes:
-  postgres_data:
-  redis_data:
+# All dev infrastructure runs externally — no containers needed here.
+#
+# External services (already running on your machine):
+#   PostgreSQL 18   →  localhost:5555   (database: attomedb, schema: attome_dev)
+#   DragonflyDB     →  localhost:6379   (Redis-compatible)
+#   RustFS          →  localhost:9000   (S3-compatible, MinIO protocol)
+#
+# Just copy .env.example → .env, fill in your credentials, then:
+#   cargo run --manifest-path crates/server/Cargo.toml

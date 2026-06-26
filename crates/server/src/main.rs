@@ -14,8 +14,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .json()
         .init();
 
-    let config = AppConfig::from_env()?;
-    tracing::info!(project = %config.project, port = config.server_port, "starting attome server");
+    let config = AppConfig::from_file()?;
+    tracing::info!(port = config.app.port, "starting attome server");
 
     let db = base_db::create_pool(&config).await?;
     tracing::info!("postgres pool connected");
@@ -23,12 +23,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     sqlx::migrate!().run(&db).await?;
     tracing::info!("migrations applied");
 
-    let redis = base_cache::create_redis_pool(&config).await?;
+    let redis   = base_cache::create_redis_pool(&config).await?;
+    let storage = base_storage::create_storage_client(&config).await?;
+    tracing::info!("storage client ready");
 
-    let base  = AppState::new(config.clone(), db, redis);
+    let base  = AppState::new(config.clone(), db, redis, storage);
     let state = XrmState::new(base);
 
-    // Load entity/field/relationship metadata into the in-memory registry.
     xrm_entity::reload_registry(&state.base.db, &state.entities).await?;
 
     let app = xrm_server::build_app(state.clone())

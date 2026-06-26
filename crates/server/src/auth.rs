@@ -76,7 +76,7 @@ pub async fn register(
     })?;
 
     let token = issue_token(user_id, SYSTEM_TENANT, &state)?;
-    let cookie = set_cookie(&token, state.config.jwt_expiry_secs);
+    let cookie = set_cookie(&token, state.config.jwt_expiry_secs());
 
     Ok((
         StatusCode::CREATED,
@@ -107,7 +107,7 @@ pub async fn login(
     }
 
     let token = issue_token(user_id, SYSTEM_TENANT, &state)?;
-    let cookie = set_cookie(&token, state.config.jwt_expiry_secs);
+    let cookie = set_cookie(&token, state.config.jwt_expiry_secs());
 
     Ok((
         StatusCode::OK,
@@ -129,9 +129,9 @@ fn issue_token(user_id: Uuid, tenant_id: Uuid, state: &AppState) -> Result<Strin
         sub: user_id,
         tenant_id,
         iat: now,
-        exp: now + state.config.jwt_expiry_secs as i64,
+        exp: now + state.config.jwt_expiry_secs() as i64,
     };
-    create_token(&claims, &state.config.jwt_secret)
+    create_token(&claims, &state.config.auth.jwt_secret)
 }
 
 // ── Routes ────────────────────────────────────────────────────────────────────
