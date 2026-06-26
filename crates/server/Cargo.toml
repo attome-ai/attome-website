@@ -12,6 +12,8 @@ path = "src/main.rs"
 
 [dependencies]
 xrm-server.workspace         = true
+xrm-foundation.workspace     = true
+xrm-entity.workspace         = true
 base-types.workspace         = true
 base-config.workspace        = true
 base-db.workspace            = true

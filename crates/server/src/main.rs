@@ -2,6 +2,7 @@ mod auth;
 
 use base_config::AppConfig;
 use base_server::AppState;
+use xrm_foundation::XrmState;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -24,11 +25,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let redis = base_cache::create_redis_pool(&config).await?;
 
-    let state = AppState::new(config.clone(), db, redis);
+    let base  = AppState::new(config.clone(), db, redis);
+    let state = XrmState::new(base);
 
-    // build_app returns Router<()> (state already set); auth routes need .with_state() first.
+    // Load entity/field/relationship metadata into the in-memory registry.
+    xrm_entity::reload_registry(&state.base.db, &state.entities).await?;
+
     let app = xrm_server::build_app(state.clone())
-        .merge(auth::routes().with_state(state.clone()));
+        .merge(auth::routes().with_state(state.base.clone()));
 
     let addr     = config.bind_addr();
     let listener = tokio::net::TcpListener::bind(&addr).await?;
