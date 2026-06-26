@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "powershell",
+            "command": "$c = Get-Content '.\\.claude\\commands\\coding-guidelines.md' -Raw -Encoding utf8; @{hookSpecificOutput=@{hookEventName='SessionStart';additionalContext=$c}} | ConvertTo-Json -Compress -Depth 5",
+            "statusMessage": "Loading coding guidelines..."
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ghcr.io/attome-ai/attome-server:${IMAGE_TAG:-latest}
+    env_file:
+      - .env
+    expose:
+      - "8080"        # accessible within Docker network only — nginx routes to this
+    restart: unless-stopped
+    networks:
+      - attome-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health/ready"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+# Scale with: docker compose up --scale server=3
+# All instances join the same Docker network; nginx resolves "server" to all replicas via Docker DNS.
+
+networks:
+  attome-net:
+    external: true
+    name: attome-network     # shared network owned by nginx/docker-compose.yml

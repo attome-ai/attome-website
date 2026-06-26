@@ -1,0 +1,22 @@
+[package]
+name        = "server"
+version.workspace    = true
+edition.workspace    = true
+authors.workspace    = true
+repository.workspace = true
+license.workspace    = true
+
+[[bin]]
+name = "server"
+path = "src/main.rs"
+
+[dependencies]
+xrm-server.workspace        = true
+base-config.workspace       = true
+base-db.workspace           = true
+base-cache.workspace        = true
+base-server.workspace       = true
+tokio.workspace             = true
+tracing.workspace           = true
+tracing-subscriber.workspace = true
+sqlx.workspace              = true
