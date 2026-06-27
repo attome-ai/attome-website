@@ -17,7 +17,7 @@ import { AuthService } from '@attome/base';
         <div class="card-icon">◫</div>
         <h3>Entities</h3>
         <p>Browse and manage your XRM entity records.</p>
-        <a routerLink="/entity/contact" class="card-link">Open Contacts →</a>
+        <a routerLink="/xrm/entity/contact" class="card-link">Open Contacts →</a>
       </div>
       <div class="card">
         <div class="card-icon">⚙</div>

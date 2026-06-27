@@ -84,8 +84,8 @@ export class ShellComponent {
   private readonly router = inject(Router);
 
   readonly navItems: NavItem[] = [
-    { label: 'Dashboard', icon: '⊞', path: '/dashboard' },
-    { label: 'Entities',  icon: '◫', path: '/entity/contact' },
+    { label: 'Dashboard', icon: '⊞', path: '/xrm/dashboard' },
+    { label: 'Entities',  icon: '◫', path: '/xrm/entity/contact' },
   ];
 
   initial()  { return (this.auth.userId() ?? 'U').slice(0, 1).toUpperCase(); }

@@ -16,10 +16,22 @@ use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
+#[derive(Deserialize)]
+struct GoogleTokenInfo {
+    sub:   String,
+    email: String,
+    aud:   String,
+}
+
 // Phase 1: single system tenant; replaced with real tenant resolution in Phase 2.
 const SYSTEM_TENANT: Uuid = Uuid::from_u128(1);
 
 // ── Request / Response types ──────────────────────────────────────────────────
+
+#[derive(Deserialize)]
+pub struct GoogleAuthRequest {
+    pub credential: String,
+}
 
 #[derive(Deserialize)]
 pub struct RegisterRequest {
@@ -121,6 +133,52 @@ pub async fn logout() -> impl IntoResponse {
     (StatusCode::OK, [(header::SET_COOKIE, clear_cookie())])
 }
 
+pub async fn google_login(
+    State(state): State<AppState>,
+    Json(body): Json<GoogleAuthRequest>,
+) -> Result<Response, AppError> {
+    let url = format!(
+        "https://oauth2.googleapis.com/tokeninfo?id_token={}",
+        body.credential
+    );
+    let info: GoogleTokenInfo = reqwest::get(&url)
+        .await
+        .map_err(AppError::internal)?
+        .error_for_status()
+        .map_err(|_| AppError::Unauthorized)?
+        .json()
+        .await
+        .map_err(AppError::internal)?;
+
+    if info.aud != state.config.auth.oauth_google_client_id {
+        return Err(AppError::Unauthorized);
+    }
+
+    let user_id: Uuid = sqlx::query_scalar(
+        r#"INSERT INTO users (tenant_id, email, google_sub)
+           VALUES ($1, $2, $3)
+           ON CONFLICT (tenant_id, email)
+           DO UPDATE SET google_sub = EXCLUDED.google_sub, updated_at = now()
+           RETURNING id"#,
+    )
+    .bind(SYSTEM_TENANT)
+    .bind(&info.email)
+    .bind(&info.sub)
+    .fetch_one(&state.db)
+    .await
+    .map_err(AppError::internal)?;
+
+    let token  = issue_token(user_id, SYSTEM_TENANT, &state)?;
+    let cookie = set_cookie(&token, state.config.jwt_expiry_secs());
+
+    Ok((
+        StatusCode::OK,
+        [(header::SET_COOKIE, cookie)],
+        Json(AuthResponse { user_id }),
+    )
+        .into_response())
+}
+
 // ── Token creation ────────────────────────────────────────────────────────────
 
 fn issue_token(user_id: Uuid, tenant_id: Uuid, state: &AppState) -> Result<String, AppError> {
@@ -138,6 +196,7 @@ fn issue_token(user_id: Uuid, tenant_id: Uuid, state: &AppState) -> Result<Strin
 
 pub fn routes() -> Router<AppState> {
     Router::new()
+        .route("/api/v1/auth/google",   post(google_login))
         .route("/api/v1/auth/register", post(register))
         .route("/api/v1/auth/login",    post(login))
         .route("/api/v1/auth/logout",   post(logout))

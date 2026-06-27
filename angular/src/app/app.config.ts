@@ -9,6 +9,6 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes, withComponentInputBinding()),
     provideAnimationsAsync(),
-    provideAttomeBase({ apiUrl: environment.apiUrl, googleClientId: environment.googleClientId, portalKey: 'xrm' }),
+    provideAttomeBase({ apiUrl: environment.apiUrl, googleClientId: environment.googleClientId, portalKey: 'xrm', loginRoute: '/xrm/login' }),
   ],
 };
