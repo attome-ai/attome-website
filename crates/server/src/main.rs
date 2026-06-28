@@ -32,6 +32,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let state = XrmState::new(base);
 
     xrm_entity::reload_registry(&state.base.db, &state.entities).await?;
+    xrm_server::auto_migrate_legacy_if_empty(&state.base.db, &state.entities).await?;
 
     let app = xrm_server::build_app(state.clone())
         .merge(auth::routes().with_state(state.base.clone()))

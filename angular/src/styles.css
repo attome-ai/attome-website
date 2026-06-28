@@ -16,9 +16,14 @@
   --header-height:      64px;
 }
 
+html, body { height: 100%; }
+
 body {
   font-family: 'DM Sans', 'Inter', system-ui, -apple-system, sans-serif;
+  background: #0f172a;
 }
+
+app-root { display: block; height: 100%; }
 
 [dir="rtl"] body, [dir="rtl"] {
   font-family: 'Cairo', 'DM Sans', system-ui, sans-serif;

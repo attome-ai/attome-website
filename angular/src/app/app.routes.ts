@@ -35,27 +35,43 @@ export const routes: Routes = [
   },
   {
     path: 'xrm',
-    loadComponent: () => import('./layout/shell.component').then(m => m.ShellComponent),
+    loadComponent: () => import('@attome/xrm').then(m => m.ShellComponent),
     children: [
       {
         path: 'dashboard',
         canActivate: [authGuard],
-        loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent),
+        loadComponent: () => import('@attome/xrm').then(m => m.DashboardComponent),
       },
       {
         path: 'entity/:name',
         canActivate: [authGuard],
-        loadComponent: () => import('./pages/entity/entity-list-page.component').then(m => m.EntityListPageComponent),
+        loadComponent: () => import('@attome/xrm').then(m => m.EntityListPageComponent),
       },
       {
         path: 'entity/:name/new',
         canActivate: [authGuard],
-        loadComponent: () => import('./pages/entity/entity-form-page.component').then(m => m.EntityFormPageComponent),
+        loadComponent: () => import('@attome/xrm').then(m => m.EntityFormPageComponent),
       },
       {
         path: 'entity/:name/:id/edit',
         canActivate: [authGuard],
-        loadComponent: () => import('./pages/entity/entity-form-page.component').then(m => m.EntityFormPageComponent),
+        loadComponent: () => import('@attome/xrm').then(m => m.EntityFormPageComponent),
+      },
+    ],
+  },
+  {
+    path: 'xrm/admin',
+    loadComponent: () => import('@attome/xrm').then(m => m.ShellComponent),
+    children: [
+      {
+        path: 'entities',
+        canActivate: [authGuard],
+        loadComponent: () => import('@attome/xrm').then(m => m.EntityManagerComponent),
+      },
+      {
+        path: 'entities/:id',
+        canActivate: [authGuard],
+        loadComponent: () => import('@attome/xrm').then(m => m.EntityEditorComponent),
       },
     ],
   },
