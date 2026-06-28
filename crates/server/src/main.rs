@@ -2,8 +2,8 @@ mod auth;
 
 use base_config::AppConfig;
 use base_server::AppState;
-use tower_http::cors::{AllowHeaders, AllowMethods, AllowOrigin, CorsLayer};
 use xrm_foundation::XrmState;
+use xrm_server::XrmSystem;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -21,12 +21,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let db = base_db::create_pool(&config).await?;
     tracing::info!("postgres pool connected");
 
-    sqlx::migrate!().run(&db).await?;
-    tracing::info!("migrations applied");
-
     let redis   = base_cache::create_redis_pool(&config).await?;
     let storage = base_storage::create_storage_client(&config).await?;
-    tracing::info!("storage client ready");
+    tracing::info!("infrastructure clients ready");
 
     let base  = AppState::new(config.clone(), db, redis, storage);
     let state = XrmState::new(base);
@@ -34,15 +31,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     xrm_entity::reload_registry(&state.base.db, &state.entities).await?;
     xrm_server::auto_migrate_legacy_if_empty(&state.base.db, &state.entities).await?;
 
-    let app = xrm_server::build_app(state.clone())
-        .merge(auth::routes().with_state(state.base.clone()))
-        .layer(
-            CorsLayer::new()
-                .allow_origin(AllowOrigin::mirror_request())
-                .allow_credentials(true)
-                .allow_methods(AllowMethods::mirror_request())
-                .allow_headers(AllowHeaders::mirror_request()),
-        );
+    // ── Build the XRM platform ─────────────────────────────────────────────────
+    // Set XRM_DOMAIN env var (or call .domain("...")) to bind the license to your domain.
+    // Set XRM_LICENSE_FILE env var to point to your license.json (default: ./license.json).
+    // Replace the noop service backends with real implementations for production.
+    let system = XrmSystem::builder(state)
+        // .domain("my.client.com")
+        // .notifications(Arc::new(SendGridService::new(&config)))
+        // .ai(Arc::new(OpenAiService::new(&config)))
+        .build()
+        .await?;
+
+    let base_state = system.state().base.clone();
+
+    let app = system.core_routes()
+        .merge(auth::routes().with_state(base_state));
 
     let addr     = config.bind_addr();
     let listener = tokio::net::TcpListener::bind(&addr).await?;

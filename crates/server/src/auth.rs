@@ -16,17 +16,14 @@ use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
+// ── Request / Response types ──────────────────────────────────────────────────
+
 #[derive(Deserialize)]
 struct GoogleTokenInfo {
     sub:   String,
     email: String,
     aud:   String,
 }
-
-// Phase 1: single system tenant; replaced with real tenant resolution in Phase 2.
-const SYSTEM_TENANT: Uuid = Uuid::from_u128(1);
-
-// ── Request / Response types ──────────────────────────────────────────────────
 
 #[derive(Deserialize)]
 pub struct GoogleAuthRequest {
@@ -35,13 +32,13 @@ pub struct GoogleAuthRequest {
 
 #[derive(Deserialize)]
 pub struct RegisterRequest {
-    pub email: String,
+    pub email:    String,
     pub password: String,
 }
 
 #[derive(Deserialize)]
 pub struct LoginRequest {
-    pub email: String,
+    pub email:    String,
     pub password: String,
 }
 
@@ -71,23 +68,22 @@ pub async fn register(
     let password_hash = hash_password(&body.password)?;
 
     let user_id: Uuid = sqlx::query_scalar(
-        "INSERT INTO users (tenant_id, email, password_hash)
-         VALUES ($1, $2, $3)
+        "INSERT INTO users (email, password_hash)
+         VALUES ($1, $2)
          RETURNING id",
     )
-    .bind(SYSTEM_TENANT)
     .bind(&body.email)
     .bind(&password_hash)
     .fetch_one(&state.db)
     .await
     .map_err(|e| match e {
-        sqlx::Error::Database(ref db) if db.constraint() == Some("uq_users_tenant_email") => {
+        sqlx::Error::Database(ref db) if db.constraint() == Some("uq_users_email") => {
             AppError::Conflict("email already registered")
         }
         other => AppError::internal(other),
     })?;
 
-    let token = issue_token(user_id, SYSTEM_TENANT, &state)?;
+    let token  = issue_token(user_id, &state)?;
     let cookie = set_cookie(&token, state.config.jwt_expiry_secs());
 
     Ok((
@@ -103,10 +99,8 @@ pub async fn login(
     Json(body): Json<LoginRequest>,
 ) -> Result<Response, AppError> {
     let row: Option<(Uuid, String)> = sqlx::query_as(
-        "SELECT id, password_hash FROM users
-         WHERE tenant_id = $1 AND email = $2 AND is_active = true",
+        "SELECT id, password_hash FROM users WHERE email = $1 AND is_active = true",
     )
-    .bind(SYSTEM_TENANT)
     .bind(&body.email)
     .fetch_optional(&state.db)
     .await
@@ -118,7 +112,7 @@ pub async fn login(
         return Err(AppError::Unauthorized);
     }
 
-    let token = issue_token(user_id, SYSTEM_TENANT, &state)?;
+    let token  = issue_token(user_id, &state)?;
     let cookie = set_cookie(&token, state.config.jwt_expiry_secs());
 
     Ok((
@@ -155,20 +149,19 @@ pub async fn google_login(
     }
 
     let user_id: Uuid = sqlx::query_scalar(
-        r#"INSERT INTO users (tenant_id, email, google_sub)
-           VALUES ($1, $2, $3)
-           ON CONFLICT (tenant_id, email)
+        r#"INSERT INTO users (email, google_sub)
+           VALUES ($1, $2)
+           ON CONFLICT (email)
            DO UPDATE SET google_sub = EXCLUDED.google_sub, updated_at = now()
            RETURNING id"#,
     )
-    .bind(SYSTEM_TENANT)
     .bind(&info.email)
     .bind(&info.sub)
     .fetch_one(&state.db)
     .await
     .map_err(AppError::internal)?;
 
-    let token  = issue_token(user_id, SYSTEM_TENANT, &state)?;
+    let token  = issue_token(user_id, &state)?;
     let cookie = set_cookie(&token, state.config.jwt_expiry_secs());
 
     Ok((
@@ -181,11 +174,10 @@ pub async fn google_login(
 
 // ── Token creation ────────────────────────────────────────────────────────────
 
-fn issue_token(user_id: Uuid, tenant_id: Uuid, state: &AppState) -> Result<String, AppError> {
+fn issue_token(user_id: Uuid, state: &AppState) -> Result<String, AppError> {
     let now = Utc::now().timestamp();
     let claims = SessionClaims {
         sub: user_id,
-        tenant_id,
         iat: now,
         exp: now + state.config.jwt_expiry_secs() as i64,
     };

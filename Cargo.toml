@@ -61,3 +61,4 @@ base-cache    = { path = "../attome-base/crates/base-cache" }
 base-auth     = { path = "../attome-base/crates/base-auth" }
 base-server   = { path = "../attome-base/crates/base-server" }
 base-storage  = { path = "../attome-base/crates/base-storage" }
+base-license  = { path = "../attome-base/crates/base-license" }
