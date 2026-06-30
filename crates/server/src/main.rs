@@ -29,9 +29,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let base  = AppState::new(config.clone(), db, redis, storage);
     let state = XrmState::new(base);
 
-    xrm_entity::reload_registry(&state.base.db, &state.entities).await?;
-    xrm_server::seed_core_entities(&state.base.db, &state.entities).await?;
-
     // ── Build the XRM platform ─────────────────────────────────────────────────
     // Set XRM_DOMAIN env var (or call .domain("...")) to bind the license to your domain.
     // Set XRM_LICENSE_FILE env var to point to your license.json (default: ./license.json).
