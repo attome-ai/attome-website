@@ -66,18 +66,22 @@ pub async fn register(
     Json(body): Json<RegisterRequest>,
 ) -> Result<Response, AppError> {
     let password_hash = hash_password(&body.password)?;
+    let new_id        = Uuid::new_v4();
 
     let user_id: Uuid = sqlx::query_scalar(
-        "INSERT INTO users (email, password_hash)
-         VALUES ($1, $2)
+        "INSERT INTO core_systemuser (id, email, password_hash, createdon)
+         VALUES ($1, $2, $3, now())
          RETURNING id",
     )
+    .bind(new_id)
     .bind(&body.email)
     .bind(&password_hash)
     .fetch_one(&state.db)
     .await
     .map_err(|e| match e {
-        sqlx::Error::Database(ref db) if db.constraint() == Some("uq_users_email") => {
+        sqlx::Error::Database(ref db)
+            if db.constraint() == Some("core_systemuser_email_unique") =>
+        {
             AppError::Conflict("email already registered")
         }
         other => AppError::internal(other),
@@ -99,7 +103,11 @@ pub async fn login(
     Json(body): Json<LoginRequest>,
 ) -> Result<Response, AppError> {
     let row: Option<(Uuid, String)> = sqlx::query_as(
-        "SELECT id, password_hash FROM users WHERE email = $1 AND is_active = true",
+        "SELECT id, password_hash
+         FROM core_systemuser
+         WHERE lower(email) = lower($1)
+           AND is_active = true
+           AND password_hash IS NOT NULL",
     )
     .bind(&body.email)
     .fetch_optional(&state.db)
@@ -111,6 +119,12 @@ pub async fn login(
     if !verify_password(&body.password, &stored_hash)? {
         return Err(AppError::Unauthorized);
     }
+
+    sqlx::query("UPDATE core_systemuser SET last_login = now() WHERE id = $1")
+        .bind(user_id)
+        .execute(&state.db)
+        .await
+        .map_err(AppError::internal)?;
 
     let token  = issue_token(user_id, &state)?;
     let cookie = set_cookie(&token, state.config.jwt_expiry_secs());
@@ -148,12 +162,14 @@ pub async fn google_login(
         return Err(AppError::Unauthorized);
     }
 
+    // Upsert on email — links Google to existing password accounts automatically.
     let user_id: Uuid = sqlx::query_scalar(
-        r#"INSERT INTO users (email, google_sub)
-           VALUES ($1, $2)
-           ON CONFLICT (email)
-           DO UPDATE SET google_sub = EXCLUDED.google_sub, updated_at = now()
-           RETURNING id"#,
+        "INSERT INTO core_systemuser (id, email, google_sub, createdon, last_login)
+         VALUES (gen_random_uuid(), $1, $2, now(), now())
+         ON CONFLICT (email) DO UPDATE
+             SET google_sub = EXCLUDED.google_sub,
+                 last_login = now()
+         RETURNING id",
     )
     .bind(&info.email)
     .bind(&info.sub)

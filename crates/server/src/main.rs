@@ -2,6 +2,7 @@ mod auth;
 
 use base_config::AppConfig;
 use base_server::AppState;
+use tower_http::cors::{AllowHeaders, AllowMethods, AllowOrigin, CorsLayer};
 use xrm_foundation::XrmState;
 use xrm_server::XrmSystem;
 
@@ -29,7 +30,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let state = XrmState::new(base);
 
     xrm_entity::reload_registry(&state.base.db, &state.entities).await?;
-    xrm_server::auto_migrate_legacy_if_empty(&state.base.db, &state.entities).await?;
+    xrm_server::seed_core_entities(&state.base.db, &state.entities).await?;
 
     // ── Build the XRM platform ─────────────────────────────────────────────────
     // Set XRM_DOMAIN env var (or call .domain("...")) to bind the license to your domain.
@@ -45,7 +46,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let base_state = system.state().base.clone();
 
     let app = system.core_routes()
-        .merge(auth::routes().with_state(base_state));
+        .merge(auth::routes().with_state(base_state))
+        .layer(
+            CorsLayer::new()
+                .allow_origin(AllowOrigin::mirror_request())
+                .allow_credentials(true)
+                .allow_methods(AllowMethods::mirror_request())
+                .allow_headers(AllowHeaders::mirror_request()),
+        );
 
     let addr     = config.bind_addr();
     let listener = tokio::net::TcpListener::bind(&addr).await?;
