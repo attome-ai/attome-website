@@ -43,19 +43,17 @@ export const routes: Routes = [
         loadComponent: () => import('@attome/xrm').then(m => m.DashboardComponent),
       },
       {
-        path: 'entity/:name',
+        // xrm/entity/{segments}/list   → entity list page
+        // xrm/entity/{segments}/form   → entity form page (create)
+        // xrm/entity/{segments}/form?id=UUID → entity form page (edit)
+        path: 'entity',
         canActivate: [authGuard],
-        loadComponent: () => import('@attome/xrm').then(m => m.EntityListPageComponent),
-      },
-      {
-        path: 'entity/:name/new',
-        canActivate: [authGuard],
-        loadComponent: () => import('@attome/xrm').then(m => m.EntityFormPageComponent),
-      },
-      {
-        path: 'entity/:name/:id/edit',
-        canActivate: [authGuard],
-        loadComponent: () => import('@attome/xrm').then(m => m.EntityFormPageComponent),
+        children: [
+          {
+            path: '**',
+            loadComponent: () => import('@attome/xrm').then(m => m.EntityRouterComponent),
+          },
+        ],
       },
     ],
   },
@@ -72,6 +70,16 @@ export const routes: Routes = [
         path: 'entities/:id',
         canActivate: [authGuard],
         loadComponent: () => import('@attome/xrm').then(m => m.EntityEditorComponent),
+      },
+      {
+        path: 'queries',
+        canActivate: [authGuard],
+        loadComponent: () => import('@attome/xrm').then(m => m.QueryListComponent),
+      },
+      {
+        path: 'queries/:id',
+        canActivate: [authGuard],
+        loadComponent: () => import('@attome/xrm').then(m => m.QueryEditorComponent),
       },
     ],
   },

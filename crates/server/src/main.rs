@@ -1,7 +1,8 @@
 mod auth;
 
+use axum::middleware;
 use base_config::AppConfig;
-use base_server::AppState;
+use base_server::{middleware::auth as authn_mw, AppState};
 use tower_http::cors::{AllowHeaders, AllowMethods, AllowOrigin, CorsLayer};
 use xrm_foundation::XrmState;
 use xrm_server::XrmSystem;
@@ -29,21 +30,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let base  = AppState::new(config.clone(), db, redis, storage);
     let state = XrmState::new(base);
 
-    // ── Build the XRM platform ─────────────────────────────────────────────────
-    // Set XRM_DOMAIN env var (or call .domain("...")) to bind the license to your domain.
-    // Set XRM_LICENSE_FILE env var to point to your license.json (default: ./license.json).
-    // Replace the noop service backends with real implementations for production.
     let system = XrmSystem::builder(state)
-        // .domain("my.client.com")
-        // .notifications(Arc::new(SendGridService::new(&config)))
-        // .ai(Arc::new(OpenAiService::new(&config)))
         .build()
         .await?;
 
     let base_state = system.state().base.clone();
 
+    // ── Auth routes: public (login/register) + protected (api-keys) ──────────
+    let auth_routes = auth::public_routes()
+        .merge(
+            auth::protected_routes()
+                .layer(middleware::from_fn_with_state(base_state.clone(), authn_mw::authn))
+        )
+        .with_state(base_state);
+
     let app = system.core_routes()
-        .merge(auth::routes().with_state(base_state))
+        .merge(auth_routes)
         .layer(
             CorsLayer::new()
                 .allow_origin(AllowOrigin::mirror_request())
